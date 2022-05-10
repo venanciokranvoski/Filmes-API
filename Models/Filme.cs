@@ -8,6 +8,7 @@ namespace Filmes_API.Models
 {
     public class Filme
     {
+        // A responsabilidade nao ´´e do usuario mandar o id
         [Key]
         [Required]
         public int Id { get; set; }

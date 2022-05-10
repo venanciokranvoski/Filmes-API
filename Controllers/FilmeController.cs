@@ -28,8 +28,16 @@ namespace Filmes_API.Controllers
         [HttpPost]
 
         // Adicionar um filme     //Vem do Corpo da Requisição 
-        public IActionResult AdicionarFilme([FromBody] Filme filme)
-        {
+        public IActionResult AdicionarFilme([FromBody] CreateFilmeDto filmeDto)
+        {    // tranformando o filmeDto em filme. 
+            Filme filme = new Filme
+            {
+                // constructor explicito
+                Titulo = filmeDto.Titulo,
+                Genero = filmeDto.Genero,
+                Diretor = filmeDto.Diretor,
+                Duracao = filmeDto.Duracao
+            };
             //filme.Id = id++;
             //filmes.Add(filme);
             // CreateAtAction qual foi a açao que criou este recurso!.
@@ -53,7 +61,16 @@ namespace Filmes_API.Controllers
             Filme filme = _context.Filmes.FirstOrDefault(filme => filme.Id == id);
             if (filme != null)
             {
-                return Ok(filme); // esses dois recursos nao sao do tipo filme
+                ReadFilmeDto filmeDto = new ReadFilmeDto
+                {
+                    Titulo  = filme.Titulo,
+                    Diretor = filme.Diretor,
+                    Duracao = filme.Duracao,
+                    Id = filme.Id,
+                    Genero = filme.Genero,
+                    HoraDaConsulta = DateTime.Now
+                };
+                return Ok(filmeDto); // esses dois recursos nao sao do tipo filme
             }
             return NotFound();
         }
@@ -62,7 +79,7 @@ namespace Filmes_API.Controllers
         // anotação
 
         [HttpPut("{id}")]   // Apartir do corpo  
-        public IActionResult AtualizaFilme(int id, [FromBody] Filme filmeNovo)
+        public IActionResult AtualizaFilme(int id, [FromBody] UpdateFilmeDto filmeDto)
         {
             Filme filme = _context.Filmes.FirstOrDefault(filme => filme.Id == id);
             if(filme == null)
@@ -70,10 +87,10 @@ namespace Filmes_API.Controllers
                 return NotFound();  
             }
             // nao é o mais recomandavel. 
-            filme.Titulo  = filmeNovo.Titulo;
-            filme.Duracao = filmeNovo.Duracao;
-            filme.Diretor = filmeNovo.Diretor;
-            filme.Genero  = filmeNovo.Genero;
+            filme.Titulo  = filmeDto.Titulo;
+            filme.Duracao = filmeDto.Duracao;
+            filme.Diretor = filmeDto.Diretor;
+            filme.Genero  = filmeDto.Genero;
             _context.SaveChanges();
             return NoContent();
         }
